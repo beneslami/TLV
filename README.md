@@ -37,3 +37,20 @@ So, according to above chart, the meaning of below code is: **Reading/writing 4b
 struct xmsg *ptr;
 ptr->if_addr2;
 ```
+
+Having said that, now let's assume machine A is 32 and B is 64bit. As a result, the memory layout for ```xmsg``` in machine A and B will look like below:
+![picture](data/layout.png)
+
+In this case, each machine wants to translate incoming bytes to its known data structure and they will see garbage. Another problem is that when a vendor upgrades its own system and tries to add a few items into the data structure. So, newer version of the system will not be able to communicate with predecessors. (Funny situation!)
+
+TLV is a mechanism to encode the data in the format that is independent of
+ * Machine Architecture
+ * Underlying OS
+ * Compiler
+ * Programming Language
+
+TLV has three components as below:
+
+![picture](data/TLV.png)
+
+As you can see, Type value and data length is some number between 0 and 255. Regarding Data length, it is obvious that the length of the data should not exceeds 255 bytes. Each machine in the network should be aware of TLV types in advance. For example, there is a TLV type table which shows the structure associated with TLV type value. For example, if a router sends TLV message with TLV type 132, the received router knows that this message contains 4 bytes of IP address followed by 1 byte of subnet mask. 
