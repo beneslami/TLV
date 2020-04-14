@@ -53,4 +53,10 @@ TLV has three components as below:
 
 ![picture](data/TLV.png)
 
-As you can see, Type value and data length is some number between 0 and 255. Regarding Data length, it is obvious that the length of the data should not exceeds 255 bytes. Each machine in the network should be aware of TLV types in advance. For example, there is a TLV type table which shows the structure associated with TLV type value. For example, if a router sends TLV message with TLV type 132, the received router knows that this message contains 4 bytes of IP address followed by 1 byte of subnet mask. 
+As you can see, Type value and data length is some number between 0 and 255. Regarding Data length, it is obvious that the length of the data should not exceeds 255 bytes. Each machine in the network should be aware of TLV types in advance. For example, there is a TLV type table which shows the structure associated with TLV type value. For example, if a router sends TLV message with TLV type 132, the received router knows that this message contains 4 bytes of IP address followed by 1 byte of subnet mask.
+
+---
+Take a look at tlv.c and there are interesting things in coding. The reason that I used memcpy to copy the ip address to ```char ip_address[32]``` is that ```memcpy``` is a machine agnostic API. It means there is no need to copy bytes to ```int``` or ```unsigned int``` formatted variables. There is platform dependent piece of code between ```#if0``` and ```endif```.
+In case of not recognizing the tlv_type, the code will simply ignore the incoming tlv message as you can see in default section of the code.
+
+To sum up: TLVs are all about sending and receiving byte by byte, and every machine MUST know TLV type definitions. 
